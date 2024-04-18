@@ -1,9 +1,34 @@
 #include <stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include"ahocorassic.h"
-vector Trie;
+// #include"ahocorassic.h"
+
+typedef struct Node
+{
+    int nextLetter[96];
+    int parent;
+    int isWord;
+    int suff_link;
+    int auto_move[96]; //auto_move - запоминание перехода автомата
+    int par; //par - вершина-отец в дереве
+    char symb;
+    int suff_flink;
+}Node;
+typedef struct Vector
+{
+    Node* array;
+    int cap;
+    int top;
+}vector;
+typedef struct VectorS
+{
+    char** array;
+    int cap;
+    int top;
+}vectorS;
 vectorS Pattern;
+vector Trie;
+
 void vector_add(vector* array, Node vertex)
 {
     if(array->cap == 0)
@@ -60,7 +85,7 @@ void add_string_to_trie(char* string, int length)
     int num = 0;
     for(int step = 0; step < length; step++)
     {
-        int ch = string[step];
+        char ch = string[step] - 'a';
         if (Trie.array[num].nextLetter[ch] == -1)
         {
             vector_add(&Trie, makeTrieVertex(num, string[step]));
@@ -135,7 +160,7 @@ int IsInTrie(const char* string, int length)
     int num = 0;   
     for (int step = 0; step < length; step++)
     {
-        char ch = string[step];
+        char ch = string[step] - 'a';
         if (Trie.array[num].nextLetter[ch] == -1)
         {
             return 0;         
@@ -161,7 +186,25 @@ void find_all_pos(const char* s)
     int u = 0;
     for(int i = 0; i < (int)strlen(s); i++)
     {
-        u = get_auto_move(u, s[i]);
+        u = get_auto_move(u, s[i] - 'a');
         check(u, i + 1);
     }
+}
+
+char buffer[1024];
+int main(int argc, char** argv)
+{
+    initTrie();
+    char * inputFile = argv[1];
+    for(int step = 2; step < argc; step++)
+    {
+        add_string_to_trie(argv[step], strlen(argv[step]));
+    }    
+    FILE *in = fopen(inputFile, "r");
+    while(scanf("%s", buffer) != EOF)
+    {
+        find_all_pos(buffer);
+        memset(buffer, '\0', sizeof(buffer));
+    }
+    return 0;
 }
