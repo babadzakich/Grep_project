@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include"ahocorassic.h"
+int lastFM;
 vector Trie;
 vectorS Pattern;
 void vector_add(vector* array, Node vertex)
@@ -55,18 +56,64 @@ void initTrie()
     vector_add(&Trie, makeTrieVertex(0, '$'));
 }
 
+int flag = 1;
+
 void add_string_to_trie(char* string, int length)
 {
     int num = 0;
     for(int step = 0; step < length; step++)
     {
-        int ch = string[step];
-        if (Trie.array[num].nextLetter[ch] == -1)
+        int ch = (int)string[step];
+        switch (ch)
         {
+        case '.':
+            if (Trie.array[num].nextLetter[ch] == -1)
+            {
+                vector_add(&Trie, makeTrieVertex(num, string[step]));
+                for(int iterator = 'A'; iterator <= 'Z'; iterator++) if(Trie.array[num].nextLetter[iterator] == -1) Trie.array[num].nextLetter[iterator] = Trie.top - 1;
+                for(int iterator = 'a'; iterator <= 'z'; iterator++) if(Trie.array[num].nextLetter[iterator] == -1) Trie.array[num].nextLetter[iterator] = Trie.top - 1;
+                Trie.array[num].nextLetter[ch] = Trie.top - 1;
+            }
+            lastFM = num;
+            num = Trie.array[num].nextLetter[ch];
+            break;
+        
+        case '@':
+            step++;
+            if (Trie.array[lastFM].nextLetter[string[step]] != num)
+            {
+                Trie.array[lastFM].nextLetter[string[step]] = num;
+            }
+            break;
+
+        case '[':
             vector_add(&Trie, makeTrieVertex(num, string[step]));
             Trie.array[num].nextLetter[ch] = Trie.top - 1;
+            state:
+                step++;
+                int start = (int)string[step];
+                step += 2;
+                int stop = (int)string[step];
+                for(int iterator = start; iterator <= stop; iterator ++)
+                {
+                    if(Trie.array[num].nextLetter[iterator] == -1) Trie.array[num].nextLetter[iterator] = Trie.top - 1;
+                }
+                if (string[++step] == ',') goto state;
+            lastFM = num;
+            num = Trie.array[num].nextLetter[ch];
+            break;            
+
+        default:
+            if (Trie.array[num].nextLetter[ch] == -1 || Trie.array[num].nextLetter['.'] != -1)
+            {
+                vector_add(&Trie, makeTrieVertex(num, string[step]));
+                Trie.array[num].nextLetter[ch] = Trie.top - 1;
+            }
+            lastFM = num;
+            num = Trie.array[num].nextLetter[ch];
+            break;
         }
-        num = Trie.array[num].nextLetter[ch];
+        
     }
     Trie.array[num].isWord = 1;
     vectorS_add(&Pattern, string);
@@ -145,23 +192,28 @@ int IsInTrie(const char* string, int length)
    return 1;
 }
 
-void check(int v, int i)
+void check(int v, int i, int n)
 {
     for(int u = v; u != 0; u = get_suff_flink(u))
     {
         if(Trie.array[u].isWord)
         {
-            printf("%d %s\n", i - (int)strlen(Pattern.array[Trie.array[u].parent]) + 1, Pattern.array[Trie.array[u].parent]);
+            printf("%d %s\n", n /*i - (int)strlen(Pattern.array[Trie.array[u].parent]) + 1*/, Pattern.array[Trie.array[u].parent]);
         }
     }
 }
 
-void find_all_pos(const char* s)
+void find_all_pos(const char* s,int n)
 {
     int u = 0;
     for(int i = 0; i < (int)strlen(s); i++)
     {
         u = get_auto_move(u, s[i]);
-        check(u, i + 1);
+        check(u, i + 1, n);
     }
+}
+
+void freeTrie()
+{
+    free(Trie.array);
 }
