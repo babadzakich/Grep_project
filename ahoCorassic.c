@@ -177,21 +177,6 @@ int get_suff_flink(int v)
    return Trie.array[v].suff_flink;
 }
 
-int IsInTrie(const char* string, int length)
-{
-    int num = 0;   
-    for (int step = 0; step < length; step++)
-    {
-        char ch = string[step];
-        if (Trie.array[num].nextLetter[ch] == -1)
-        {
-            return 0;         
-        }
-        num = Trie.array[num].nextLetter[ch];
-   }
-   return 1;
-}
-
 void check(int v, int i, int n)
 {
     for(int u = v; u != 0; u = get_suff_flink(u))
