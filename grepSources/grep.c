@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     {
         add_string_to_trie(argv[step], strlen(argv[step]));
     }    
-    freopen("output.txt", "w", stdout);
+    freopen("./inputFiles/output.txt", "w", stdout);
     FILE* fin = fopen(inputFile, "r");
 
     int line = 1;
