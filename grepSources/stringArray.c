@@ -6,8 +6,7 @@
 String data;
 int len = 0;
 void mystrncat(char* dest, char* src, int n)
-{   
-    // int len = strlen(dest);
+{
     for (int step = 0; step < n; step++)
     {
         dest[len + step] = src[step];

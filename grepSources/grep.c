@@ -7,21 +7,25 @@
 char buffer[1001];
 int main(int argc, char** argv)
 {
+    if (argc < 2)
+    {
+        printf("Usage: %s <string1> <string2> ... <stringN>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
     initTrie();
-    char * inputFile = argv[1];
-    for(int step = 2; step < argc; step++)
+    
+    for(int step = 1; step < argc; step++)
     {
         add_string_to_trie(argv[step], strlen(argv[step]));
-    }    
-    freopen("./inputFiles/output.txt", "w", stdout);
-    FILE* fin = fopen(inputFile, "r");
+    }
 
     int line = 1;
-    while(fgets(buffer, 1001, fin) != NULL)
+    while(fgets(buffer, 1001, stdin) != NULL)
     {
         add_data(buffer);
         if (buffer[strlen(buffer) - 1] == '\n' || strlen(buffer) < 1000)
-        {  
+        {
             find_all_pos(data.array, line++);
             memset(buffer, '\0', 1001);
             memset(data.array, '\0', data.cap); 
@@ -30,10 +34,7 @@ int main(int argc, char** argv)
             continue;
         }
         memset(buffer, '\0', 1001);
-        
     }
     free(data.array);
-    fclose(fin);
-    // freeTrie();
     return 0;
 }

@@ -77,7 +77,7 @@ void add_string_to_trie(char* string, int length)
             lastFM = num;
             num = Trie.array[num].nextLetter[ch];
             break;
-        
+
         case '@':
             step++;
             if (Trie.array[lastFM].nextLetter[string[step]] != num)
@@ -101,7 +101,7 @@ void add_string_to_trie(char* string, int length)
                 if (string[++step] == ',') goto state;
             lastFM = num;
             num = Trie.array[num].nextLetter[ch];
-            break;            
+            break;
 
         default:
             if (Trie.array[num].nextLetter[ch] == -1 || Trie.array[num].nextLetter['.'] != -1)
@@ -113,11 +113,11 @@ void add_string_to_trie(char* string, int length)
             num = Trie.array[num].nextLetter[ch];
             break;
         }
-        
+
     }
     Trie.array[num].isWord = 1;
     vectorS_add(&Pattern, string);
-    Trie.array[num].parent = Pattern.top - 1; 
+    Trie.array[num].parent = Pattern.top - 1;
 }
 int get_auto_move(int v, char ch);
 
@@ -165,7 +165,7 @@ int get_suff_flink(int v)
     if (Trie.array[v].suff_flink == -1)
     {
         int u = get_suff_link(v);
-        if (u == 0) //либо v - корень, либо суф. ссылка v указывает на корень 
+        if (u == 0) //либо v - корень, либо суф. ссылка v указывает на корень
         {
             Trie.array[v].suff_flink=0;
         }
@@ -183,7 +183,7 @@ void check(int v, int i, int n)
     {
         if(Trie.array[u].isWord)
         {
-            printf("%d %s\n", n /*i - (int)strlen(Pattern.array[Trie.array[u].parent]) + 1*/, Pattern.array[Trie.array[u].parent]);
+            printf("%d %s\n", n, Pattern.array[Trie.array[u].parent]);
         }
     }
 }
